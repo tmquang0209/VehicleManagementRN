@@ -1,8 +1,11 @@
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Dummy Data
 const VEHICLES = [
@@ -47,23 +50,32 @@ const FILTERS = ['Tất cả', 'Xe cư dân', 'Xe khách'];
 
 export default function DeviceListScreen() {
 	const [activeFilter, setActiveFilter] = useState('Tất cả');
+	const theme = useColorScheme() ?? 'light';
 
 	const renderItem = ({ item }: { item: (typeof VEHICLES)[0] }) => {
 		const isGuest = item.type === 'guest';
 		return (
-			<View style={styles.card}>
+			<ThemedView style={styles.card} lightColor="#fff" darkColor="#151718">
 				<Image source={{ uri: item.image }} style={styles.vehicleImage} resizeMode="cover" />
 				<View style={styles.cardContent}>
-					<ThemedText style={styles.plateNumber}>{item.plate}</ThemedText>
+					<ThemedText type="large" style={styles.plateNumber} lightColor="#11181C" darkColor="#ECEDEE">
+						{item.plate}
+					</ThemedText>
 					<View style={styles.detailsRow}>
 						{isGuest ? (
 							<View style={styles.guestBadge}>
-								<ThemedText style={styles.guestText}>Xe khách</ThemedText>
+								<ThemedText type="small" style={styles.guestText}>
+									Xe khách
+								</ThemedText>
 							</View>
 						) : (
 							<View>
-								<ThemedText style={styles.detailLabel}>Phòng</ThemedText>
-								<ThemedText style={styles.detailValue}>{item.room}</ThemedText>
+								<ThemedText type="small" style={styles.detailLabel}>
+									Phòng
+								</ThemedText>
+								<ThemedText type="medium" style={styles.detailValue}>
+									{item.room}
+								</ThemedText>
 							</View>
 						)}
 
@@ -71,12 +83,18 @@ export default function DeviceListScreen() {
 
 						{isGuest ? (
 							<View>
-								<ThemedText style={styles.detailLabelGuest}>Phòng</ThemedText>
-								<ThemedText style={styles.detailValueGuest}>{item.room}</ThemedText>
+								<ThemedText type="small" style={styles.detailLabelGuest} lightColor="#687076" darkColor="#9BA1A6">
+									Phòng
+								</ThemedText>
+								<ThemedText type="medium" style={styles.detailValueGuest} lightColor="#687076" darkColor="#9BA1A6">
+									{item.room}
+								</ThemedText>
 							</View>
 						) : (
 							<View>
-								<ThemedText style={styles.detailLabel}>Xe cư dân</ThemedText>
+								<ThemedText type="small" style={styles.detailLabel}>
+									Xe cư dân
+								</ThemedText>
 							</View>
 						)}
 					</View>
@@ -84,28 +102,49 @@ export default function DeviceListScreen() {
 				<TouchableOpacity style={styles.moreButton}>
 					{isGuest ? <MaterialCommunityIcons name="dots-vertical" size={24} color="#40B5A6" /> : <MaterialCommunityIcons name="chevron-right" size={24} color="#C4C4C4" />}
 				</TouchableOpacity>
-			</View>
+			</ThemedView>
 		);
 	};
 
 	return (
-		<SafeAreaView style={styles.container} edges={['top']}>
+		<ThemedSafeAreaView style={styles.container} edges={['top']} lightColor="#F5F7F9" darkColor="#000">
 			{/* Header */}
-			<View style={styles.header}>
+			<View style={[styles.header, { backgroundColor: theme === 'dark' ? '#000' : '#fff' }]}>
 				<View style={styles.headerTitleContainer}>
 					<MaterialCommunityIcons name="garage-variant" size={24} color="#40B5A6" />
-					<ThemedText style={styles.headerTitle}>Danh Sách Xe</ThemedText>
+					<ThemedText type="subtitle" style={styles.headerTitle} lightColor="#11181C" darkColor="#ECEDEE">
+						Danh Sách Xe
+					</ThemedText>
 				</View>
-				<TouchableOpacity style={styles.searchButton}>
+				<TouchableOpacity style={[styles.searchButton, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]}>
 					<MaterialCommunityIcons name="magnify" size={24} color="#40B5A6" />
 				</TouchableOpacity>
 			</View>
 
 			{/* Filter Section */}
-			<View style={styles.filterContainer}>
+			<View style={[styles.filterContainer, { backgroundColor: theme === 'dark' ? '#000' : '#fff', borderBottomColor: theme === 'dark' ? '#333' : '#F0F0F0' }]}>
 				{FILTERS.map((filter) => (
-					<TouchableOpacity key={filter} style={[styles.filterChip, activeFilter === filter && styles.filterChipActive]} onPress={() => setActiveFilter(filter)}>
-						<ThemedText style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}>{filter}</ThemedText>
+					<TouchableOpacity
+						key={filter}
+						style={[
+							styles.filterChip,
+							activeFilter === filter
+								? styles.filterChipActive
+								: {
+										backgroundColor: theme === 'dark' ? '#000' : '#fff',
+										borderColor: theme === 'dark' ? '#333' : '#E6E8EB',
+									},
+						]}
+						onPress={() => setActiveFilter(filter)}
+					>
+						<ThemedText
+							type="medium"
+							style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}
+							lightColor={activeFilter === filter ? '#fff' : '#11181C'}
+							darkColor={activeFilter === filter ? '#fff' : '#ECEDEE'}
+						>
+							{filter}
+						</ThemedText>
 					</TouchableOpacity>
 				))}
 			</View>
@@ -114,17 +153,16 @@ export default function DeviceListScreen() {
 			<FlatList data={VEHICLES} renderItem={renderItem} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} />
 
 			{/* FAB */}
-			<TouchableOpacity style={styles.fab}>
+			<TouchableOpacity style={styles.fab} onPress={() => router.push('/add-vehicle')}>
 				<MaterialCommunityIcons name="plus" size={32} color="#fff" />
 			</TouchableOpacity>
-		</SafeAreaView>
+		</ThemedSafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#F5F7F9',
 	},
 	header: {
 		flexDirection: 'row',
@@ -132,7 +170,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingHorizontal: 20,
 		paddingVertical: 12,
-		backgroundColor: '#fff',
 	},
 	headerTitleContainer: {
 		flexDirection: 'row',
@@ -140,13 +177,10 @@ const styles = StyleSheet.create({
 		gap: 8,
 	},
 	headerTitle: {
-		fontSize: 20,
 		fontWeight: 'bold',
-		color: '#11181C',
 	},
 	searchButton: {
 		padding: 8,
-		backgroundColor: '#E6F7F5',
 		borderRadius: 20,
 	},
 	filterContainer: {
@@ -154,7 +188,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		paddingVertical: 12,
 		gap: 12,
-		backgroundColor: '#fff',
 		borderBottomWidth: 1,
 		borderBottomColor: '#F0F0F0',
 	},
@@ -163,17 +196,13 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		borderRadius: 20,
 		borderWidth: 1,
-		borderColor: '#E6E8EB',
-		backgroundColor: '#fff',
 	},
 	filterChipActive: {
 		backgroundColor: '#40B5A6',
 		borderColor: '#40B5A6',
 	},
 	filterText: {
-		fontSize: 14,
 		fontWeight: '600',
-		color: '#11181C',
 	},
 	filterTextActive: {
 		color: '#fff',
@@ -184,12 +213,10 @@ const styles = StyleSheet.create({
 	},
 	card: {
 		flexDirection: 'row',
-		backgroundColor: '#fff',
 		borderRadius: 20,
 		padding: 12,
 		marginBottom: 16,
 		alignItems: 'center',
-		// Shadow
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.05,
@@ -207,9 +234,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	plateNumber: {
-		fontSize: 18,
 		fontWeight: 'bold',
-		color: '#11181C',
 		marginBottom: 4,
 	},
 	detailsRow: {
@@ -217,12 +242,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	detailLabel: {
-		fontSize: 12,
 		color: '#40B5A6',
 		marginBottom: 2,
 	},
 	detailValue: {
-		fontSize: 14,
 		fontWeight: '600',
 		color: '#40B5A6',
 	},
@@ -242,15 +265,12 @@ const styles = StyleSheet.create({
 	},
 	guestText: {
 		color: '#E02424', // Red for guest
-		fontSize: 12,
 		fontWeight: 'bold',
 	},
 	detailLabelGuest: {
-		fontSize: 12,
 		color: '#687076',
 	},
 	detailValueGuest: {
-		fontSize: 14,
 		fontWeight: '600',
 		color: '#687076',
 	},
@@ -267,7 +287,6 @@ const styles = StyleSheet.create({
 		backgroundColor: '#40B5A6',
 		alignItems: 'center',
 		justifyContent: 'center',
-		// Shadow
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.3,

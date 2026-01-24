@@ -1,63 +1,82 @@
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
+import { ThemedScrollView } from '@/components/ui/scroll-view';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
+	const theme = useColorScheme() ?? 'light';
 	const stats = {
 		totalVehicles: 45,
 		newVehiclesToday: 2,
 	};
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<ThemedSafeAreaView style={styles.container} lightColor="#F5F7F9" darkColor="#000">
 			<View style={styles.header}>
-				<View style={styles.iconContainer}>
+				<View style={[styles.iconContainer, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#DFF2F0' }]}>
 					<MaterialCommunityIcons name="garage-variant" size={24} color="#40B5A6" />
 				</View>
-				<ThemedText style={styles.headerTitle}>QUẢN LÝ XE</ThemedText>
+				<ThemedText type="subtitle" style={styles.headerTitle} lightColor="#11181C" darkColor="#ECEDEE">
+					QUẢN LÝ XE
+				</ThemedText>
 			</View>
-			<ScrollView contentContainerStyle={styles.scrollContent} style={{ flex: 1 }}>
+			<ThemedScrollView contentContainerStyle={styles.scrollContent}>
 				{/* Stats Card */}
-				<View style={styles.card}>
-					<Text style={styles.cardLabel}>Số xe trong nhà:</Text>
+				<ThemedView style={styles.card} lightColor="#fff" darkColor="#151718">
+					<ThemedText type="default" style={styles.cardLabel} lightColor="#687076" darkColor="#9BA1A6">
+						Số xe trong nhà:
+					</ThemedText>
 					<View style={styles.statsRow}>
-						<Text style={styles.statsValue}>{stats.totalVehicles}</Text>
-						<Text style={styles.statsUnit}>chiếc</Text>
+						<ThemedText type="extraLarge" style={styles.statsValue}>
+							{stats.totalVehicles}
+						</ThemedText>
+						<ThemedText type="subtitle" style={styles.statsUnit} lightColor="#11181C" darkColor="#ECEDEE">
+							chiếc
+						</ThemedText>
 					</View>
-					<View style={styles.subStatsContainer}>
+					<View style={[styles.subStatsContainer, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]}>
 						<MaterialCommunityIcons name="trending-up" size={16} color="#40B5A6" />
-						<Text style={styles.subStatsText}>Thêm {stats.newVehiclesToday} xe mới</Text>
+						<ThemedText type="medium" style={styles.subStatsText}>
+							Thêm {stats.newVehiclesToday} xe mới
+						</ThemedText>
 					</View>
-				</View>
+				</ThemedView>
 
 				{/* Action Section */}
-				<Text style={styles.sectionTitle}>Chọn công việc cần làm</Text>
+				<ThemedText type="subtitle" style={styles.sectionTitle} lightColor="#11181C" darkColor="#ECEDEE">
+					Chọn công việc cần làm
+				</ThemedText>
 
 				<TouchableOpacity style={[styles.actionButton, styles.buttonGreen]} onPress={() => router.push('/scan')}>
 					<View style={styles.actionIconContainer}>
 						<MaterialCommunityIcons name="qrcode-scan" size={40} color="#fff" />
 					</View>
-					<Text style={styles.actionButtonText}>QUÉT BIỂN SỐ</Text>
+					<ThemedText type="large" style={styles.actionButtonText}>
+						QUÉT BIỂN SỐ
+					</ThemedText>
 				</TouchableOpacity>
 
-				<TouchableOpacity style={[styles.actionButton, styles.buttonBlue]} onPress={() => {}}>
+				<TouchableOpacity style={[styles.actionButton, styles.buttonBlue]} onPress={() => router.push('/add-vehicle')}>
 					<View style={styles.actionIconContainer}>
 						<MaterialCommunityIcons name="account-plus" size={40} color="#fff" />
 					</View>
-					<Text style={styles.actionButtonText}>ĐĂNG KÝ XE KHÁCH</Text>
+					<ThemedText type="large" style={styles.actionButtonText}>
+						ĐĂNG KÝ XE KHÁCH
+					</ThemedText>
 				</TouchableOpacity>
-			</ScrollView>
-		</SafeAreaView>
+			</ThemedScrollView>
+		</ThemedSafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#F5F7F9',
 	},
 	scrollContent: {
 		padding: 20,
@@ -74,25 +93,20 @@ const styles = StyleSheet.create({
 		width: 40,
 		height: 40,
 		borderRadius: 20,
-		backgroundColor: '#DFF2F0', // Light green background
 		alignItems: 'center',
 		justifyContent: 'center',
 		position: 'absolute',
 		left: 0,
 	},
 	headerTitle: {
-		fontSize: 20,
 		fontWeight: 'bold',
-		color: '#11181C',
 		textAlign: 'center',
-		flex: 1, // To center title properly
+		flex: 1,
 	},
 	card: {
-		backgroundColor: '#fff',
 		borderRadius: 20,
 		padding: 24,
 		marginBottom: 24,
-		// Start Shadow
 		shadowColor: '#000',
 		shadowOffset: {
 			width: 0,
@@ -101,13 +115,10 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.1,
 		shadowRadius: 8,
 		elevation: 4,
-		// End Shadow
 		borderLeftWidth: 6,
 		borderLeftColor: '#40B5A6',
 	},
 	cardLabel: {
-		fontSize: 16,
-		color: '#687076',
 		marginBottom: 8,
 	},
 	statsRow: {
@@ -116,20 +127,16 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	statsValue: {
-		fontSize: 48,
 		fontWeight: 'bold',
 		color: '#40B5A6',
 		marginRight: 8,
 	},
 	statsUnit: {
-		fontSize: 20,
 		fontWeight: '500',
-		color: '#11181C',
 	},
 	subStatsContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#E6F7F5',
 		alignSelf: 'flex-start',
 		paddingHorizontal: 12,
 		paddingVertical: 6,
@@ -139,12 +146,9 @@ const styles = StyleSheet.create({
 		marginLeft: 6,
 		color: '#40B5A6',
 		fontWeight: '600',
-		fontSize: 14,
 	},
 	sectionTitle: {
-		fontSize: 22,
 		fontWeight: 'bold',
-		color: '#11181C',
 		marginBottom: 16,
 	},
 	actionButton: {
@@ -153,7 +157,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginBottom: 16,
-		// Shadow
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.15,
@@ -177,7 +180,6 @@ const styles = StyleSheet.create({
 	},
 	actionButtonText: {
 		color: '#fff',
-		fontSize: 18,
 		fontWeight: 'bold',
 		letterSpacing: 1,
 	},

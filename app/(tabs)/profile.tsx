@@ -1,13 +1,29 @@
 import { ThemedSwitch } from '@/components/switch';
+import { ThemedButton } from '@/components/themed-button';
 import { ThemedText } from '@/components/themed-text';
+import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
+import { ThemedScrollView } from '@/components/ui/scroll-view';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useSettingsStore } from '@/store/settings-store';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+import React from 'react';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function ProfileScreen() {
-	const [largeTextEnabled, setLargeTextEnabled] = useState(true);
-	const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+	const { isLargeText, setLargeText, theme: settingTheme, setTheme } = useSettingsStore();
+	// Use the hook to get the effective color scheme
+	const colorScheme = useColorScheme();
+	const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
+
+	const isDark = colorScheme === 'dark';
+	const backgroundColor = isDark ? '#000000' : '#F5F7F9';
+	const cardColor = isDark ? '#151718' : '#FFFFFF';
+	const textColor = isDark ? '#ECEDEE' : '#11181C';
+	const subTextColor = isDark ? '#9BA1A6' : '#687076';
+	const iconBgColor = isDark ? '#1A2E35' : '#F0F9F8';
+	const dividerColor = isDark ? '#333333' : '#F0F0F0';
+	const borderColor = isDark ? '#333' : '#E6E8EB';
 
 	const renderSettingItem = (
 		icon: keyof typeof MaterialCommunityIcons.glyphMap,
@@ -19,32 +35,29 @@ export default function ProfileScreen() {
 	) => {
 		return (
 			<View style={styles.settingItem}>
-				<View style={styles.settingIconContainer}>
+				<View style={[styles.settingIconContainer, { backgroundColor: iconBgColor }]}>
 					<MaterialCommunityIcons name={icon} size={24} color="#40B5A6" />
 				</View>
 				<View style={styles.settingContent}>
-					<ThemedText style={styles.settingTitle}>{title}</ThemedText>
-					{subtitle && <ThemedText style={styles.settingSubtitle}>{subtitle}</ThemedText>}
+					<ThemedText type="defaultSemiBold" style={[styles.settingTitle, { color: textColor }]}>
+						{title}
+					</ThemedText>
+					{subtitle && (
+						<ThemedText type="small" style={[styles.settingSubtitle, { color: subTextColor }]}>
+							{subtitle}
+						</ThemedText>
+					)}
 				</View>
-				{type === 'toggle' ? <ThemedSwitch onValueChange={onValueChange} value={value} /> : <MaterialCommunityIcons name="chevron-right" size={24} color="#C4C4C4" />}
+				{type === 'toggle' ? <ThemedSwitch onValueChange={onValueChange} value={value} /> : <MaterialCommunityIcons name="chevron-right" size={24} color={subTextColor} />}
 			</View>
 		);
 	};
 
 	return (
-		<SafeAreaView style={styles.container} edges={['top']}>
-			{/* Header */}
-			<View style={styles.header}>
-				<TouchableOpacity style={styles.backButton}>
-					<MaterialCommunityIcons name="chevron-left" size={28} color="#11181C" />
-				</TouchableOpacity>
-				<ThemedText style={styles.headerTitle}>Cài Đặt Ứng Dụng</ThemedText>
-				<View style={{ width: 40 }} />
-			</View>
-
-			<ScrollView contentContainerStyle={styles.scrollContent}>
+		<ThemedSafeAreaView style={[styles.container, { backgroundColor }]} edges={['top']}>
+			<ThemedScrollView contentContainerStyle={styles.scrollContent}>
 				{/* User Card */}
-				<View style={styles.userCard}>
+				<View style={[styles.userCard, { backgroundColor: cardColor }]}>
 					<Image
 						source={{
 							uri: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop',
@@ -52,52 +65,56 @@ export default function ProfileScreen() {
 						style={styles.avatar}
 					/>
 					<View style={styles.userInfo}>
-						<ThemedText style={styles.userName}>Bác Nguyễn Văn A</ThemedText>
-						<ThemedText style={styles.userRole}>Chủ nhà trọ • 0901 234 567</ThemedText>
-						<TouchableOpacity style={styles.editProfileButton}>
-							<ThemedText style={styles.editProfileText}>Chỉnh sửa hồ sơ</ThemedText>
-						</TouchableOpacity>
+						<ThemedText type="large" style={[styles.userName, { color: textColor }]}>
+							Bác Nguyễn Văn A
+						</ThemedText>
+						<ThemedText type="medium" style={styles.userRole}>
+							Chủ nhà trọ • 0901 234 567
+						</ThemedText>
+						<ThemedButton title="Chỉnh sửa hồ sơ" size="sm" variant="secondary" style={styles.editProfileButton} />
 					</View>
 				</View>
 
 				{/* Settings Section: Display & Sound */}
-				<ThemedText style={styles.sectionHeader}>CÀI ĐẶT HIỂN THỊ & ÂM THANH</ThemedText>
-				<View style={styles.sectionContainer}>
-					{renderSettingItem('format-size', 'Chữ phóng to', 'Giúp bác đọc rõ hơn', 'toggle', largeTextEnabled, setLargeTextEnabled)}
-					<View style={styles.divider} />
+				<ThemedText type="medium" style={[styles.sectionHeader, { color: subTextColor }]}>
+					CÀI ĐẶT HIỂN THỊ & ÂM THANH
+				</ThemedText>
+				<View style={[styles.sectionContainer, { backgroundColor: cardColor }]}>
+					{renderSettingItem('theme-light-dark', 'Chế độ tối', 'Giao diện nền tối', 'toggle', settingTheme === 'dark', (val) => setTheme(val ? 'dark' : 'light'))}
+					<View style={[styles.divider, { backgroundColor: dividerColor }]} />
+					{renderSettingItem('format-size', 'Chữ phóng to', 'Giúp bác đọc rõ hơn', 'toggle', isLargeText, setLargeText)}
+					<View style={[styles.divider, { backgroundColor: dividerColor }]} />
 					{renderSettingItem('bell-ring', 'Thông báo xe ra vào', 'Rung và chuông khi có xe', 'toggle', notificationsEnabled, setNotificationsEnabled)}
 				</View>
 
 				{/* Settings Section: Security & Management */}
-				<ThemedText style={styles.sectionHeader}>BẢO MẬT & QUẢN LÝ</ThemedText>
-				<View style={styles.sectionContainer}>
+				<ThemedText type="medium" style={[styles.sectionHeader, { color: subTextColor }]}>
+					BẢO MẬT & QUẢN LÝ
+				</ThemedText>
+				<View style={[styles.sectionContainer, { backgroundColor: cardColor }]}>
 					<TouchableOpacity>{renderSettingItem('lock', 'Mật khẩu ứng dụng')}</TouchableOpacity>
-					<View style={styles.divider} />
+					<View style={[styles.divider, { backgroundColor: dividerColor }]} />
 					<TouchableOpacity>{renderSettingItem('help-circle', 'Hướng dẫn sử dụng')}</TouchableOpacity>
-					<View style={styles.divider} />
+					<View style={[styles.divider, { backgroundColor: dividerColor }]} />
 					<TouchableOpacity>{renderSettingItem('headset', 'Liên hệ hỗ trợ kỹ thuật')}</TouchableOpacity>
 				</View>
 
 				{/* Footer Actions */}
-				<TouchableOpacity style={styles.emergencyButton}>
-					<MaterialCommunityIcons name="map-marker-radius" size={24} color="#E02424" />
-					<ThemedText style={styles.emergencyText}>TRỢ GIÚP KHẨN CẤP</ThemedText>
-				</TouchableOpacity>
+				<ThemedButton title="TRỢ GIÚP KHẨN CẤP" variant="danger" icon={<MaterialCommunityIcons name="map-marker-radius" size={24} color="#FFF" />} style={styles.emergencyButton} />
 
-				<TouchableOpacity style={styles.logoutButton}>
-					<ThemedText style={styles.logoutText}>Đăng xuất tài khoản</ThemedText>
-				</TouchableOpacity>
+				<ThemedButton title="Đăng xuất tài khoản" variant="ghost" onPress={() => router.push('/login')} style={styles.logoutButton} />
 
-				<ThemedText style={styles.versionText}>Phiên bản 2.4.0 (2024)</ThemedText>
-			</ScrollView>
-		</SafeAreaView>
+				<ThemedText type="small" style={[styles.versionText, { color: subTextColor }]}>
+					Phiên bản 2.4.0 (2024)
+				</ThemedText>
+			</ThemedScrollView>
+		</ThemedSafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#F5F7F9',
 	},
 	header: {
 		flexDirection: 'row',
@@ -105,22 +122,18 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingHorizontal: 16,
 		paddingVertical: 12,
-		backgroundColor: '#fff',
 	},
 	backButton: {
 		padding: 4,
 	},
 	headerTitle: {
-		fontSize: 18,
 		fontWeight: 'bold',
-		color: '#11181C',
 	},
 	scrollContent: {
-		padding: 20,
+		paddingBottom: 100,
 	},
 	userCard: {
 		flexDirection: 'row',
-		backgroundColor: '#fff',
 		borderRadius: 20,
 		padding: 20,
 		alignItems: 'center',
@@ -140,41 +153,27 @@ const styles = StyleSheet.create({
 	},
 	userInfo: {
 		flex: 1,
+		alignItems: 'flex-start',
 	},
 	userName: {
-		fontSize: 18,
 		fontWeight: 'bold',
-		color: '#11181C',
 		marginBottom: 4,
 	},
 	userRole: {
-		fontSize: 14,
 		color: '#40B5A6',
 		marginBottom: 8,
 		fontWeight: '500',
 	},
 	editProfileButton: {
-		backgroundColor: '#E6F7F5',
-		paddingVertical: 6,
-		paddingHorizontal: 12,
-		borderRadius: 12,
-		alignSelf: 'flex-start',
-	},
-	editProfileText: {
-		color: '#40B5A6',
-		fontSize: 12,
-		fontWeight: '600',
+		marginBottom: 0,
 	},
 	sectionHeader: {
-		fontSize: 14,
 		fontWeight: 'bold',
-		color: '#687076',
 		marginBottom: 12,
 		marginLeft: 4,
 		textTransform: 'uppercase',
 	},
 	sectionContainer: {
-		backgroundColor: '#fff',
 		borderRadius: 20,
 		padding: 4,
 		marginBottom: 24,
@@ -194,7 +193,6 @@ const styles = StyleSheet.create({
 		width: 40,
 		height: 40,
 		borderRadius: 20,
-		backgroundColor: '#F0F9F8',
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginRight: 16,
@@ -203,50 +201,23 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	settingTitle: {
-		fontSize: 16,
 		fontWeight: '600',
-		color: '#11181C',
 	},
 	settingSubtitle: {
-		fontSize: 12,
-		color: '#687076',
 		marginTop: 2,
 	},
 	divider: {
 		height: 1,
-		backgroundColor: '#F0F0F0',
-		marginLeft: 72, // Align with text
+		marginLeft: 72,
 	},
 	emergencyButton: {
-		backgroundColor: '#FEF2F2',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingVertical: 16,
-		borderRadius: 16,
 		marginBottom: 24,
-		borderWidth: 1,
-		borderColor: '#FDE8E8',
-	},
-	emergencyText: {
-		color: '#E02424',
-		fontWeight: 'bold',
-		fontSize: 16,
-		marginLeft: 8,
 	},
 	logoutButton: {
-		alignItems: 'center',
 		marginBottom: 16,
-	},
-	logoutText: {
-		color: '#687076',
-		fontSize: 16,
-		fontWeight: '500',
 	},
 	versionText: {
 		textAlign: 'center',
-		color: '#9BA1A6',
-		fontSize: 12,
 		marginBottom: 40,
 	},
 });

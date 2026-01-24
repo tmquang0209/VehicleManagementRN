@@ -13,6 +13,7 @@
       "bundleIdentifier": "com.anonymous.VehicleManagementApp"
     },
     "android": {
+      "package": "com.anonymous.VehicleManagementApp",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

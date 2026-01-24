@@ -4,22 +4,23 @@ import { StyleSheet } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { ScanButton } from '@/components/scan-button';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-const TINT_COLOR = '#40B5A6';
 
 export default function TabLayout() {
 	const router = useRouter();
+	const colorScheme = useColorScheme() ?? 'light';
 
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: TINT_COLOR,
-				tabBarInactiveTintColor: '#687076',
+				tabBarActiveTintColor: Colors[colorScheme].tint,
+				tabBarInactiveTintColor: Colors[colorScheme].tabIconDefault,
 				headerShown: false,
 				tabBarButton: HapticTab,
 				tabBarShowLabel: true,
-				tabBarStyle: styles.tabBar,
+				tabBarStyle: [styles.tabBar, { backgroundColor: Colors[colorScheme].background }],
 				tabBarLabelStyle: styles.label,
 			}}
 		>

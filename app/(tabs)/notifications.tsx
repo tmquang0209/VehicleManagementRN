@@ -1,10 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
+import { StyleSheet } from 'react-native';
 
 export default function NotificationsScreen() {
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>Thông báo</Text>
-		</View>
+		<ThemedSafeAreaView style={styles.container} lightColor="#fff" darkColor="#151718">
+			<ThemedText type="subtitle" style={styles.title} lightColor="#11181C" darkColor="#ECEDEE">
+				Thông báo
+			</ThemedText>
+		</ThemedSafeAreaView>
 	);
 }
 
@@ -13,10 +17,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#fff',
 	},
 	title: {
-		fontSize: 20,
 		fontWeight: 'bold',
 	},
 });
