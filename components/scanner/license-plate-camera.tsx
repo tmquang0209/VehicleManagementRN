@@ -139,7 +139,7 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 				) : (
 					<View style={{ width: 36 }} /> // Spacer to balance title
 				)}
-				<ThemedText type="medium" style={styles.headerTitle}>
+				<ThemedText type="large" style={styles.headerTitle}>
 					{title}
 				</ThemedText>
 				<View style={{ width: 36 }} />

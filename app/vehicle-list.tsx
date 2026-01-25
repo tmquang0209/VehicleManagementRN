@@ -1,8 +1,8 @@
+import { ThemedIcon } from '@/components/themed-icon';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -100,62 +100,68 @@ export default function DeviceListScreen() {
 					</View>
 				</View>
 				<TouchableOpacity style={styles.moreButton}>
-					{isGuest ? <MaterialCommunityIcons name="dots-vertical" size={24} color="#40B5A6" /> : <MaterialCommunityIcons name="chevron-right" size={24} color="#C4C4C4" />}
+					{isGuest ? (
+						<ThemedIcon name="dots-vertical" size={24} color={theme === 'dark' ? 'white' : 'gray'} />
+					) : (
+						<ThemedIcon name="chevron-right" size={24} color={theme === 'dark' ? 'white' : 'gray'} />
+					)}
 				</TouchableOpacity>
 			</ThemedView>
 		);
 	};
 
 	return (
-		<ThemedSafeAreaView style={styles.container} edges={['top']} lightColor="#F5F7F9" darkColor="#000">
-			{/* Header */}
-			<View style={[styles.header, { backgroundColor: theme === 'dark' ? '#000' : '#fff' }]}>
-				<View style={styles.headerTitleContainer}>
-					<MaterialCommunityIcons name="garage-variant" size={24} color="#40B5A6" />
-					<ThemedText type="subtitle" style={styles.headerTitle} lightColor="#11181C" darkColor="#ECEDEE">
-						Danh Sách Xe
+		<ThemedSafeAreaView style={styles.container}>
+			{/* Header - Aligned with House Management */}
+			<View style={styles.header}>
+				<View style={styles.headerLeft}>
+					<ThemedIcon name="garage-variant" size={24} color="primary" />
+					<ThemedText type="subtitle" style={styles.headerTitle}>
+						DANH SÁCH XE
 					</ThemedText>
 				</View>
-				<TouchableOpacity style={[styles.searchButton, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]}>
-					<MaterialCommunityIcons name="magnify" size={24} color="#40B5A6" />
-				</TouchableOpacity>
-			</View>
-
-			{/* Filter Section */}
-			<View style={[styles.filterContainer, { backgroundColor: theme === 'dark' ? '#000' : '#fff', borderBottomColor: theme === 'dark' ? '#333' : '#F0F0F0' }]}>
-				{FILTERS.map((filter) => (
-					<TouchableOpacity
-						key={filter}
-						style={[
-							styles.filterChip,
-							activeFilter === filter
-								? styles.filterChipActive
-								: {
-										backgroundColor: theme === 'dark' ? '#000' : '#fff',
-										borderColor: theme === 'dark' ? '#333' : '#E6E8EB',
-									},
-						]}
-						onPress={() => setActiveFilter(filter)}
-					>
-						<ThemedText
-							type="medium"
-							style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}
-							lightColor={activeFilter === filter ? '#fff' : '#11181C'}
-							darkColor={activeFilter === filter ? '#fff' : '#ECEDEE'}
-						>
-							{filter}
-						</ThemedText>
+				<View style={{ flexDirection: 'row', gap: 8 }}>
+					<TouchableOpacity style={[styles.iconButton, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]}>
+						<ThemedIcon name="magnify" size={24} color="primary" />
 					</TouchableOpacity>
-				))}
+					<TouchableOpacity style={styles.addButton} onPress={() => router.push('/add-vehicle')}>
+						<ThemedIcon name="plus" size={24} color="white" />
+					</TouchableOpacity>
+				</View>
 			</View>
 
-			{/* List */}
-			<FlatList data={VEHICLES} renderItem={renderItem} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} />
+			<View style={styles.content}>
+				{/* Filter Section */}
+				<View style={styles.filterContainer}>
+					{FILTERS.map((filter) => (
+						<TouchableOpacity
+							key={filter}
+							style={[
+								styles.filterChip,
+								activeFilter === filter
+									? styles.filterChipActive
+									: {
+											backgroundColor: theme === 'dark' ? '#151718' : '#fff',
+											borderColor: theme === 'dark' ? '#333' : '#E6E8EB',
+										},
+							]}
+							onPress={() => setActiveFilter(filter)}
+						>
+							<ThemedText
+								type="medium"
+								style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}
+								lightColor={activeFilter === filter ? '#fff' : '#11181C'}
+								darkColor={activeFilter === filter ? '#fff' : '#ECEDEE'}
+							>
+								{filter}
+							</ThemedText>
+						</TouchableOpacity>
+					))}
+				</View>
 
-			{/* FAB */}
-			<TouchableOpacity style={styles.fab} onPress={() => router.push('/add-vehicle')}>
-				<MaterialCommunityIcons name="plus" size={32} color="#fff" />
-			</TouchableOpacity>
+				{/* List */}
+				<FlatList data={VEHICLES} renderItem={renderItem} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} />
+			</View>
 		</ThemedSafeAreaView>
 	);
 }
@@ -168,38 +174,57 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingHorizontal: 20,
+		paddingHorizontal: 16,
 		paddingVertical: 12,
+		// backgroundColor: matches house-management usually implicitly transparent or handled by container
 	},
-	headerTitleContainer: {
+	headerLeft: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 8,
+		backgroundColor: '#E6F0FF', // Very light blue pill
+		paddingHorizontal: 12,
+		paddingVertical: 8,
+		borderRadius: 20,
 	},
 	headerTitle: {
-		fontWeight: 'bold',
+		textTransform: 'uppercase',
+		fontSize: 16,
+		color: '#0056D2',
 	},
-	searchButton: {
-		padding: 8,
+	iconButton: {
+		width: 40,
+		height: 40,
 		borderRadius: 20,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	addButton: {
+		width: 40,
+		height: 40,
+		borderRadius: 20,
+		backgroundColor: '#0056D2',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	content: {
+		flex: 1,
 	},
 	filterContainer: {
 		flexDirection: 'row',
-		paddingHorizontal: 20,
+		paddingHorizontal: 16,
 		paddingVertical: 12,
 		gap: 12,
-		borderBottomWidth: 1,
-		borderBottomColor: '#F0F0F0',
 	},
 	filterChip: {
-		paddingVertical: 8,
-		paddingHorizontal: 20,
+		paddingVertical: 6,
+		paddingHorizontal: 16,
 		borderRadius: 20,
 		borderWidth: 1,
 	},
 	filterChipActive: {
-		backgroundColor: '#40B5A6',
-		borderColor: '#40B5A6',
+		backgroundColor: '#0056D2',
+		borderColor: '#0056D2',
 	},
 	filterText: {
 		fontWeight: '600',
@@ -208,26 +233,26 @@ const styles = StyleSheet.create({
 		color: '#fff',
 	},
 	listContent: {
-		padding: 20,
-		paddingBottom: 100, // Space for FAB
+		padding: 16,
+		paddingBottom: 40,
 	},
 	card: {
 		flexDirection: 'row',
-		borderRadius: 20,
+		borderRadius: 16,
 		padding: 12,
-		marginBottom: 16,
+		marginBottom: 12,
 		alignItems: 'center',
 		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 2 },
+		shadowOffset: { width: 0, height: 1 },
 		shadowOpacity: 0.05,
-		shadowRadius: 8,
-		elevation: 3,
+		shadowRadius: 2,
+		elevation: 2,
 	},
 	vehicleImage: {
-		width: 70,
-		height: 70,
+		width: 60,
+		height: 60,
 		borderRadius: 12,
-		marginRight: 16,
+		marginRight: 12,
 	},
 	cardContent: {
 		flex: 1,
@@ -242,30 +267,31 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	detailLabel: {
-		color: '#40B5A6',
+		color: '#0056D2',
 		marginBottom: 2,
 	},
 	detailValue: {
 		fontWeight: '600',
-		color: '#40B5A6',
+		color: '#0056D2',
 	},
 	dividerDot: {
-		width: 2,
-		height: 2,
-		borderRadius: 1,
+		width: 3,
+		height: 3,
+		borderRadius: 1.5,
 		backgroundColor: '#ccc',
-		marginHorizontal: 12,
+		marginHorizontal: 8,
 	},
 	guestBadge: {
 		backgroundColor: '#FDE8E8',
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-		borderRadius: 8,
+		paddingHorizontal: 6,
+		paddingVertical: 2,
+		borderRadius: 6,
 		marginRight: 0,
 	},
 	guestText: {
 		color: '#E02424', // Red for guest
 		fontWeight: 'bold',
+		fontSize: 12,
 	},
 	detailLabelGuest: {
 		color: '#687076',
@@ -275,22 +301,6 @@ const styles = StyleSheet.create({
 		color: '#687076',
 	},
 	moreButton: {
-		padding: 8,
-	},
-	fab: {
-		position: 'absolute',
-		bottom: 24,
-		right: 24,
-		width: 56,
-		height: 56,
-		borderRadius: 28,
-		backgroundColor: '#40B5A6',
-		alignItems: 'center',
-		justifyContent: 'center',
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 4 },
-		shadowOpacity: 0.3,
-		shadowRadius: 8,
-		elevation: 8,
+		padding: 4,
 	},
 });

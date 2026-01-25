@@ -32,10 +32,10 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="device-list"
+				name="house-management"
 				options={{
-					title: 'Danh sách',
-					tabBarIcon: ({ color }) => <MaterialCommunityIcons size={28} name="car" color={color} />,
+					title: 'Quản lý nhà',
+					tabBarIcon: ({ color }) => <MaterialCommunityIcons name="office-building" size={28} color={color} />,
 				}}
 			/>
 
@@ -71,6 +71,7 @@ export default function TabLayout() {
 
 			{/* Hide unused routes if any (e.g. menu) */}
 			<Tabs.Screen name="menu" options={{ href: null }} />
+			<Tabs.Screen name="room-list" options={{ href: null }} />
 		</Tabs>
 	);
 }

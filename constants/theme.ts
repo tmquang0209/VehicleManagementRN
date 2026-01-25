@@ -5,49 +5,61 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const primaryBlue = '#0056D2';
+const secondaryGreen = '#34C759';
 
 export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
+	primary: primaryBlue,
+	secondary: secondaryGreen,
+	light: {
+		text: '#11181C',
+		background: '#fff',
+		tint: primaryBlue,
+		icon: '#687076',
+		tabIconDefault: '#687076',
+		tabIconSelected: primaryBlue,
+		primary: primaryBlue,
+		success: secondaryGreen,
+		danger: '#FF3B30',
+		card: '#FFFFFF',
+		border: '#E6E8EB',
+	},
+	dark: {
+		text: '#ECEDEE',
+		background: '#151718',
+		tint: '#fff',
+		icon: '#9BA1A6',
+		tabIconDefault: '#9BA1A6',
+		tabIconSelected: '#fff',
+		primary: '#40B5A6',
+		success: '#30D158',
+		danger: '#FF453A',
+		card: '#151718',
+		border: '#333333',
+	},
 };
 
 export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
+	ios: {
+		/** iOS `UIFontDescriptorSystemDesignDefault` */
+		sans: 'system-ui',
+		/** iOS `UIFontDescriptorSystemDesignSerif` */
+		serif: 'ui-serif',
+		/** iOS `UIFontDescriptorSystemDesignRounded` */
+		rounded: 'ui-rounded',
+		/** iOS `UIFontDescriptorSystemDesignMonospaced` */
+		mono: 'ui-monospace',
+	},
+	default: {
+		sans: 'normal',
+		serif: 'serif',
+		rounded: 'normal',
+		mono: 'monospace',
+	},
+	web: {
+		sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+		serif: "Georgia, 'Times New Roman', serif",
+		rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
+		mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+	},
 });

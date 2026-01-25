@@ -4,10 +4,11 @@ import { ThemedTextInput } from '@/components/text-input';
 import { ThemedButton } from '@/components/themed-button';
 import { ThemedIcon } from '@/components/themed-icon';
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
 import { ThemedScrollView } from '@/components/ui/scroll-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import dayjs from 'dayjs';
 import { router, Stack } from 'expo-router';
 import React, { useState } from 'react';
@@ -34,9 +35,11 @@ export default function AddVehicleScreen() {
 	const [showRoomDropdown, setShowRoomDropdown] = useState(false);
 	const [showScanner, setShowScanner] = useState(false);
 	const [vehicleImage, setVehicleImage] = useState<string | null>(null);
-	const colorScheme = useColorScheme();
-	const isDark = colorScheme === 'dark';
-	const backgroundColor = isDark ? '#000000' : '#F5F7F9';
+
+	const textColor = useThemeColor({}, 'text');
+	const placeholderColor = useThemeColor({ light: '#9BA1A6', dark: '#687076' }, 'text');
+	const borderColor = useThemeColor({ light: '#E6E8EB', dark: '#333' }, 'text');
+	const inputBg = useThemeColor({ light: '#fff', dark: '#151718' }, 'background');
 
 	const handleDateChange = (event: any, selectedDate?: Date) => {
 		const currentDate = selectedDate || date;
@@ -74,26 +77,21 @@ export default function AddVehicleScreen() {
 		router.back();
 	};
 
-	const inputBg = theme === 'dark' ? '#151718' : '#fff';
-	const borderColor = theme === 'dark' ? '#333' : '#E6E8EB';
-	const textColor = theme === 'dark' ? '#ECEDEE' : '#11181C';
-	const placeholderColor = theme === 'dark' ? '#687076' : '#9BA1A6';
-
 	return (
-		<ThemedSafeAreaView style={[styles.container, { backgroundColor }]} edges={['top']}>
+		<ThemedSafeAreaView style={styles.container} edges={['top']}>
 			<Stack.Screen options={{ headerShown: false }} />
 			{/* Header */}
-			<View style={[styles.header, { backgroundColor: theme === 'dark' ? '#151718' : '#fff', borderBottomColor: borderColor }]}>
+			<View style={styles.header}>
 				<TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
 					<ThemedIcon name="arrow-left" size={28} />
 				</TouchableOpacity>
-				<ThemedText type="subtitle" style={styles.headerTitle} lightColor="#11181C" darkColor="#ECEDEE">
-					Thêm Xe Mới
+				<ThemedText type="subtitle" style={styles.headerTitle}>
+					THÊM XE MỚI
 				</ThemedText>
 				<View style={{ width: 32 }} />
 			</View>
 
-			<ThemedScrollView>
+			<ThemedScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 				{/* Plate Number */}
 				<View style={styles.inputGroup}>
 					<ThemedTextInput label="Biển số xe" placeholder="VD: 59G1-123.45" value={plate} onChangeText={setPlate} autoCapitalize="characters" containerStyle={{ marginBottom: 0 }} />
@@ -104,18 +102,20 @@ export default function AddVehicleScreen() {
 					<ThemedText type="defaultSemiBold" style={styles.label}>
 						Hình ảnh xe
 					</ThemedText>
-					<TouchableOpacity style={[styles.imagePlaceholder, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]} onPress={() => setShowScanner(true)}>
-						{vehicleImage ? (
-							<Image source={{ uri: vehicleImage }} style={styles.capturedImage} resizeMode="cover" />
-						) : (
-							<>
-								<MaterialCommunityIcons name="camera" size={48} color="#40B5A6" />
-								<ThemedText type="defaultSemiBold" style={styles.imagePlaceholderText}>
-									CHỤP ẢNH XE
-								</ThemedText>
-							</>
-						)}
-					</TouchableOpacity>
+					<ThemedView style={styles.imagePlaceholder} lightColor="#E6F7F5" darkColor="#1A2E35">
+						<TouchableOpacity style={styles.imagePlaceholderTouch} onPress={() => setShowScanner(true)}>
+							{vehicleImage ? (
+								<Image source={{ uri: vehicleImage }} style={styles.capturedImage} resizeMode="cover" />
+							) : (
+								<>
+									<ThemedIcon name="camera" size={48} color="primary" />
+									<ThemedText type="defaultSemiBold" style={styles.imagePlaceholderText}>
+										CHỤP ẢNH XE
+									</ThemedText>
+								</>
+							)}
+						</TouchableOpacity>
+					</ThemedView>
 				</View>
 
 				<LicensePlateScanner
@@ -137,7 +137,7 @@ export default function AddVehicleScreen() {
 						<ThemedText type="default" style={{ color: selectedRoom ? textColor : placeholderColor }}>
 							{selectedRoom || 'Chọn số phòng...'}
 						</ThemedText>
-						<ThemedIcon name="chevron-down" size={24} lightColor="#9BA1A6" darkColor="#687076" />
+						<ThemedIcon name="chevron-down" size={24} />
 					</TouchableOpacity>
 
 					{showRoomDropdown && (
@@ -165,7 +165,7 @@ export default function AddVehicleScreen() {
 						{RELATIONSHIPS.map((rel) => (
 							<TouchableOpacity
 								key={rel.id}
-								style={[styles.chip, { backgroundColor: relationship === rel.label ? '#40B5A6' : theme === 'dark' ? '#222' : '#F5F7F9' }]}
+								style={[styles.chip, { backgroundColor: relationship === rel.label ? '#0056D2' : theme === 'dark' ? '#222' : '#F5F7F9' }]}
 								onPress={() => setRelationship(rel.label)}
 							>
 								<ThemedText
@@ -201,17 +201,17 @@ export default function AddVehicleScreen() {
 
 					{/* Quick Date Chips */}
 					<View style={styles.quickDateContainer}>
-						<TouchableOpacity style={[styles.quickDateChip, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]} onPress={() => handleQuickDate('now')}>
+						<TouchableOpacity style={[styles.quickDateChip, { borderColor: '#0056D2' }]} onPress={() => handleQuickDate('now')}>
 							<ThemedText type="small" style={styles.quickDateText}>
 								Ngay bây giờ
 							</ThemedText>
 						</TouchableOpacity>
-						<TouchableOpacity style={[styles.quickDateChip, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]} onPress={() => handleQuickDate('morning')}>
+						<TouchableOpacity style={[styles.quickDateChip, { borderColor: '#0056D2' }]} onPress={() => handleQuickDate('morning')}>
 							<ThemedText type="small" style={styles.quickDateText}>
 								Sáng mai (8h)
 							</ThemedText>
 						</TouchableOpacity>
-						<TouchableOpacity style={[styles.quickDateChip, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]} onPress={() => handleQuickDate('evening')}>
+						<TouchableOpacity style={[styles.quickDateChip, { borderColor: '#0056D2' }]} onPress={() => handleQuickDate('evening')}>
 							<ThemedText type="small" style={styles.quickDateText}>
 								Tối mai (19h)
 							</ThemedText>
@@ -240,16 +240,20 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingHorizontal: 16,
 		paddingVertical: 12,
-		borderBottomWidth: 1,
+		// No border or simple spacing
 	},
 	backButton: {
 		padding: 4,
 	},
 	headerTitle: {
 		fontWeight: 'bold',
+		textTransform: 'uppercase',
+		color: '#0056D2',
+		fontSize: 16,
 	},
 	inputGroup: {
 		marginBottom: 24,
+		paddingHorizontal: 16,
 	},
 	label: {
 		marginBottom: 8,
@@ -257,12 +261,16 @@ const styles = StyleSheet.create({
 	imagePlaceholder: {
 		height: 200,
 		borderRadius: 16,
-		borderWidth: 2,
-		borderColor: '#40B5A6',
+		overflow: 'hidden',
+		borderWidth: 1,
+		borderColor: '#E6E8EB',
 		borderStyle: 'dashed',
+	},
+	imagePlaceholderTouch: {
+		width: '100%',
+		height: '100%',
 		alignItems: 'center',
 		justifyContent: 'center',
-		overflow: 'hidden',
 	},
 	capturedImage: {
 		width: '100%',
@@ -270,7 +278,7 @@ const styles = StyleSheet.create({
 	},
 	imagePlaceholderText: {
 		marginTop: 12,
-		color: '#40B5A6',
+		color: '#0056D2',
 		textTransform: 'uppercase',
 	},
 	dropdownTrigger: {
@@ -285,8 +293,8 @@ const styles = StyleSheet.create({
 	dropdownMenu: {
 		position: 'absolute',
 		top: '100%',
-		left: 0,
-		right: 0,
+		left: 16,
+		right: 16,
 		borderRadius: 12,
 		borderWidth: 1,
 		marginTop: 4,
@@ -342,10 +350,10 @@ const styles = StyleSheet.create({
 		paddingVertical: 6,
 		borderRadius: 16,
 		borderWidth: 1,
-		borderColor: '#40B5A6',
+		// borderColor handles by inline
 	},
 	quickDateText: {
-		color: '#40B5A6',
+		color: '#0056D2',
 		fontWeight: '600',
 	},
 });

@@ -1,6 +1,7 @@
 import { ThemedSwitch } from '@/components/switch';
 import { ThemedButton } from '@/components/themed-button';
 import { ThemedText } from '@/components/themed-text';
+import { Header } from '@/components/ui/header';
 import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
 import { ThemedScrollView } from '@/components/ui/scroll-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -21,7 +22,7 @@ export default function ProfileScreen() {
 	const cardColor = isDark ? '#151718' : '#FFFFFF';
 	const textColor = isDark ? '#ECEDEE' : '#11181C';
 	const subTextColor = isDark ? '#9BA1A6' : '#687076';
-	const iconBgColor = isDark ? '#1A2E35' : '#F0F9F8';
+	const iconBgColor = isDark ? '#1A2E35' : '#E6F0FF';
 	const dividerColor = isDark ? '#333333' : '#F0F0F0';
 
 	const renderSettingItem = (
@@ -35,7 +36,7 @@ export default function ProfileScreen() {
 		return (
 			<View style={styles.settingItem}>
 				<View style={[styles.settingIconContainer, { backgroundColor: iconBgColor }]}>
-					<MaterialCommunityIcons name={icon} size={24} color="#40B5A6" />
+					<MaterialCommunityIcons name={icon} size={24} color="#0056D2" />
 				</View>
 				<View style={styles.settingContent}>
 					<ThemedText type="defaultSemiBold" style={[styles.settingTitle, { color: textColor }]}>
@@ -54,6 +55,9 @@ export default function ProfileScreen() {
 
 	return (
 		<ThemedSafeAreaView style={[styles.container, { backgroundColor }]} edges={['top']}>
+			{/* Header */}
+			<Header title="TÀI KHOẢN" icon="account" />
+
 			<ThemedScrollView contentContainerStyle={styles.scrollContent}>
 				{/* User Card */}
 				<View style={[styles.userCard, { backgroundColor: cardColor }]}>
@@ -114,19 +118,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-	},
-	header: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		paddingHorizontal: 16,
-		paddingVertical: 12,
-	},
-	backButton: {
-		padding: 4,
-	},
-	headerTitle: {
-		fontWeight: 'bold',
 	},
 	scrollContent: {
 		paddingBottom: 100,

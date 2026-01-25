@@ -1,16 +1,19 @@
 import { LicensePlateCamera } from '@/components/scanner/license-plate-camera';
+import { ThemedIcon } from '@/components/themed-icon';
 import { ThemedText } from '@/components/themed-text';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ThemedView } from '@/components/themed-view';
+import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { router, Stack } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Animated, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Reanimated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const TOAST_DURATION = 3000;
 
 export default function ScanScreen() {
+	const theme = useColorScheme() ?? 'light';
 	const [scanned, setScanned] = useState(false);
 	// Toast State
 	const [toastVisible, setToastVisible] = useState(false);
@@ -90,7 +93,7 @@ export default function ScanScreen() {
 		});
 
 	return (
-		<SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+		<ThemedSafeAreaView style={styles.container} edges={['top', 'bottom']}>
 			<Stack.Screen options={{ headerShown: false }} />
 
 			{/* custom Toast */}
@@ -100,11 +103,11 @@ export default function ScanScreen() {
 						styles.toastContainer,
 						{
 							opacity: fadeAnim,
-							backgroundColor: toastType === 'success' ? '#40B5A6' : '#EF4444',
+							backgroundColor: toastType === 'success' ? '#0056D2' : '#EF4444',
 						},
 					]}
 				>
-					<MaterialCommunityIcons name={toastType === 'success' ? 'check-circle' : 'alert-circle'} size={24} color="#fff" />
+					<ThemedIcon name={toastType === 'success' ? 'check-circle' : 'alert-circle'} size={24} color="white" />
 					<ThemedText type="defaultSemiBold" style={styles.toastText}>
 						{toastMessage}
 					</ThemedText>
@@ -116,7 +119,7 @@ export default function ScanScreen() {
 			{/* Result Card (Bottom Sheet style) */}
 			{scanned && result && (
 				<GestureDetector gesture={panGesture}>
-					<Reanimated.View style={[styles.resultContainer, animatedStyle]}>
+					<Reanimated.View style={[styles.resultContainer, animatedStyle, { backgroundColor: theme === 'dark' ? '#151718' : '#fff' }]}>
 						<View style={styles.handleBarContainer}>
 							<View style={styles.handleBar} />
 						</View>
@@ -135,7 +138,7 @@ export default function ScanScreen() {
 							{result.licensePlate}
 						</ThemedText>
 
-						<View style={styles.userInfoCard}>
+						<ThemedView style={styles.userInfoCard} lightColor="#F5F7F9" darkColor="#1A2E35">
 							<Image
 								source={{
 									uri: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop',
@@ -146,21 +149,21 @@ export default function ScanScreen() {
 								<ThemedText type="defaultSemiBold" style={styles.userName}>
 									{result.ownerName}
 								</ThemedText>
-								<ThemedText type="medium" style={styles.userAddress}>
+								<ThemedText type="medium" style={styles.userAddress} lightColor="#687076" darkColor="#9BA1A6">
 									{result.ownerAddress}
 								</ThemedText>
 							</View>
-						</View>
+						</ThemedView>
 
 						<TouchableOpacity style={[styles.actionBtn, styles.btnApprove]} onPress={() => alert('Approved')}>
-							<MaterialCommunityIcons name="check-circle-outline" size={24} color="#fff" />
+							<ThemedIcon name="check-circle-outline" size={24} color="white" />
 							<ThemedText type="defaultSemiBold" style={styles.btnText}>
 								CHO XE VÀO
 							</ThemedText>
 						</TouchableOpacity>
 
 						<TouchableOpacity style={[styles.actionBtn, styles.btnCancel]} onPress={handleReset}>
-							<MaterialCommunityIcons name="close-circle-outline" size={24} color="#EF4444" />
+							<ThemedIcon name="close-circle-outline" size={24} color="red" />
 							<ThemedText type="defaultSemiBold" style={[styles.btnText, { color: '#EF4444' }]}>
 								HỦY
 							</ThemedText>
@@ -174,7 +177,7 @@ export default function ScanScreen() {
 					</Reanimated.View>
 				</GestureDetector>
 			)}
-		</SafeAreaView>
+		</ThemedSafeAreaView>
 	);
 }
 
@@ -208,7 +211,6 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		right: 0,
-		backgroundColor: '#fff',
 		borderTopLeftRadius: 24,
 		borderTopRightRadius: 24,
 		padding: 24,
@@ -241,25 +243,23 @@ const styles = StyleSheet.create({
 		textTransform: 'uppercase',
 	},
 	badge: {
-		backgroundColor: '#E6F7F5',
+		backgroundColor: '#E6F0FF',
 		paddingHorizontal: 12,
 		paddingVertical: 6,
 		borderRadius: 12,
 	},
 	badgeText: {
-		color: '#40B5A6',
+		color: '#0056D2',
 		fontWeight: 'bold',
 	},
 	licensePlate: {
 		fontWeight: '800',
-		color: '#11181C',
 		marginBottom: 24,
 		textAlign: 'center',
 		letterSpacing: 2,
 	},
 	userInfoCard: {
 		flexDirection: 'row',
-		backgroundColor: '#F5F7F9',
 		padding: 16,
 		borderRadius: 16,
 		alignItems: 'center',
@@ -275,7 +275,6 @@ const styles = StyleSheet.create({
 	},
 	userName: {
 		fontWeight: 'bold',
-		color: '#11181C',
 		marginBottom: 2,
 	},
 	userAddress: {
@@ -296,7 +295,7 @@ const styles = StyleSheet.create({
 		elevation: 2,
 	},
 	btnApprove: {
-		backgroundColor: '#40B5A6',
+		backgroundColor: '#0056D2',
 	},
 	btnCancel: {
 		backgroundColor: '#FEF2F2',
@@ -313,8 +312,7 @@ const styles = StyleSheet.create({
 		marginTop: 8,
 	},
 	manualLinkText: {
-		color: '#40B5A6',
-
+		color: '#0056D2',
 		fontWeight: '500',
 	},
 	toastContainer: {
@@ -335,7 +333,6 @@ const styles = StyleSheet.create({
 	},
 	toastText: {
 		color: '#fff',
-
 		fontWeight: '600',
 		marginLeft: 12,
 		flex: 1,

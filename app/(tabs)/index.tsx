@@ -1,7 +1,10 @@
+import { ThemedIcon } from '@/components/themed-icon';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Header } from '@/components/ui/header';
 import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
 import { ThemedScrollView } from '@/components/ui/scroll-view';
+import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -10,65 +13,116 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
 	const theme = useColorScheme() ?? 'light';
+	const activeColors = Colors[theme];
+
+	// Mock Stats - In a real app this would come from a store or API
 	const stats = {
-		totalVehicles: 45,
-		newVehiclesToday: 2,
+		totalHouses: 3,
+		totalRooms: 45,
+		occupiedRooms: 38,
+		emptyRooms: 7,
+		totalVehicles: 85,
 	};
 
 	return (
 		<ThemedSafeAreaView style={styles.container} lightColor="#F5F7F9" darkColor="#000">
-			<View style={styles.header}>
-				<View style={[styles.iconContainer, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#DFF2F0' }]}>
-					<MaterialCommunityIcons name="garage-variant" size={24} color="#40B5A6" />
-				</View>
-				<ThemedText type="subtitle" style={styles.headerTitle} lightColor="#11181C" darkColor="#ECEDEE">
-					QUẢN LÝ XE
-				</ThemedText>
-			</View>
+			{/* Header */}
+			<Header title="TỔNG QUAN" icon="view-dashboard" />
+
 			<ThemedScrollView contentContainerStyle={styles.scrollContent}>
-				{/* Stats Card */}
-				<ThemedView style={styles.card} lightColor="#fff" darkColor="#151718">
-					<ThemedText type="default" style={styles.cardLabel} lightColor="#687076" darkColor="#9BA1A6">
-						Số xe trong nhà:
-					</ThemedText>
-					<View style={styles.statsRow}>
-						<ThemedText type="extraLarge" style={styles.statsValue}>
-							{stats.totalVehicles}
+				{/* Overview Stats Section */}
+				<View style={styles.statsGrid}>
+					{/* Houses Card */}
+					<ThemedView style={styles.statCard} lightColor="#fff" darkColor="#151718">
+						<View style={[styles.iconContainer, { backgroundColor: '#E6F0FF' }]}>
+							<ThemedIcon name="home-city" size={24} color={Colors.primary} />
+						</View>
+						<ThemedText type="extraLarge" style={styles.statValue}>
+							{stats.totalHouses}
 						</ThemedText>
-						<ThemedText type="subtitle" style={styles.statsUnit} lightColor="#11181C" darkColor="#ECEDEE">
-							chiếc
+						<ThemedText type="small" style={styles.statLabel} lightColor="#687076" darkColor="#9BA1A6">
+							Nhà trọ
 						</ThemedText>
-					</View>
-					<View style={[styles.subStatsContainer, { backgroundColor: theme === 'dark' ? '#1A2E35' : '#E6F7F5' }]}>
-						<MaterialCommunityIcons name="trending-up" size={16} color="#40B5A6" />
-						<ThemedText type="medium" style={styles.subStatsText}>
-							Thêm {stats.newVehiclesToday} xe mới
-						</ThemedText>
-					</View>
-				</ThemedView>
+					</ThemedView>
 
-				{/* Action Section */}
+					{/* Rooms Card */}
+					<ThemedView style={styles.statCard} lightColor="#fff" darkColor="#151718">
+						<View style={[styles.iconContainer, { backgroundColor: '#E6F7F5' }]}>
+							<ThemedIcon name="door-open" size={24} color={Colors.primary} />
+						</View>
+						<View style={styles.roomStatsRow}>
+							<ThemedText type="extraLarge" style={styles.statValue}>
+								{stats.totalRooms}
+							</ThemedText>
+							<ThemedText type="small" style={[styles.statSubValue, { color: activeColors.success }]}>
+								({stats.emptyRooms} trống)
+							</ThemedText>
+						</View>
+						<ThemedText type="small" style={styles.statLabel} lightColor="#687076" darkColor="#9BA1A6">
+							Phòng
+						</ThemedText>
+					</ThemedView>
+
+					{/* Vehicles Card - Full Width */}
+					<ThemedView style={[styles.statCard, styles.fullWidthCard]} lightColor="#fff" darkColor="#151718">
+						<View style={styles.cardHeaderRow}>
+							<View style={[styles.iconContainer, { backgroundColor: '#EAFFEA' }]}>
+								<ThemedIcon name="bike" size={24} color={Colors.secondary} />
+							</View>
+							<View style={{ flex: 1, marginLeft: 12 }}>
+								<ThemedText type="extraLarge" style={styles.statValue}>
+									{stats.totalVehicles}
+								</ThemedText>
+								<ThemedText type="small" style={styles.statLabel} lightColor="#687076" darkColor="#9BA1A6">
+									Tổng số xe đang quản lý
+								</ThemedText>
+							</View>
+						</View>
+					</ThemedView>
+				</View>
+
+				{/* Quick Actions Section */}
 				<ThemedText type="subtitle" style={styles.sectionTitle} lightColor="#11181C" darkColor="#ECEDEE">
-					Chọn công việc cần làm
+					Thao tác nhanh
 				</ThemedText>
 
-				<TouchableOpacity style={[styles.actionButton, styles.buttonGreen]} onPress={() => router.push('/scan')}>
-					<View style={styles.actionIconContainer}>
-						<MaterialCommunityIcons name="qrcode-scan" size={40} color="#fff" />
-					</View>
-					<ThemedText type="large" style={styles.actionButtonText}>
-						QUÉT BIỂN SỐ
-					</ThemedText>
-				</TouchableOpacity>
+				<View style={styles.actionsGrid}>
+					<TouchableOpacity style={[styles.actionButton, styles.buttonBlue]} onPress={() => router.push('/scan')}>
+						<View style={styles.actionIconContainer}>
+							<MaterialCommunityIcons name="qrcode-scan" size={32} color="#fff" />
+						</View>
+						<ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
+							Quét xe
+						</ThemedText>
+					</TouchableOpacity>
 
-				<TouchableOpacity style={[styles.actionButton, styles.buttonBlue]} onPress={() => router.push('/add-vehicle')}>
-					<View style={styles.actionIconContainer}>
-						<MaterialCommunityIcons name="account-plus" size={40} color="#fff" />
-					</View>
-					<ThemedText type="large" style={styles.actionButtonText}>
-						ĐĂNG KÝ XE KHÁCH
-					</ThemedText>
-				</TouchableOpacity>
+					<TouchableOpacity style={[styles.actionButton, styles.buttonDark]} onPress={() => router.push('/house-form')}>
+						<View style={styles.actionIconContainer}>
+							<MaterialCommunityIcons name="home-plus" size={32} color="#fff" />
+						</View>
+						<ThemedText type="defaultSemiBold" style={styles.actionButtonText}>
+							Thêm Nhà
+						</ThemedText>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={[styles.actionButton, styles.buttonLight]} onPress={() => router.push('/(tabs)/room-list')}>
+						<View style={[styles.actionIconContainer, { backgroundColor: '#E6F0FF' }]}>
+							<MaterialCommunityIcons name="door-closed" size={32} color={Colors.primary} />
+						</View>
+						<ThemedText type="defaultSemiBold" style={[styles.actionButtonText, { color: Colors.primary }]}>
+							QL Phòng
+						</ThemedText>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={[styles.actionButton, styles.buttonLight]} onPress={() => router.push('/add-vehicle')}>
+						<View style={[styles.actionIconContainer, { backgroundColor: '#EAFFEA' }]}>
+							<MaterialCommunityIcons name="bike" size={32} color={Colors.secondary} />
+						</View>
+						<ThemedText type="defaultSemiBold" style={[styles.actionButtonText, { color: Colors.secondary }]}>
+							Thêm Xe
+						</ThemedText>
+					</TouchableOpacity>
+				</View>
 			</ThemedScrollView>
 		</ThemedSafeAreaView>
 	);
@@ -79,108 +133,103 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	scrollContent: {
-		padding: 20,
+		padding: 16,
 		paddingBottom: 100,
 	},
-	header: {
+	statsGrid: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		gap: 12,
+		marginBottom: 24,
+	},
+	statCard: {
+		flex: 1, // Take up available space (half width)
+		minWidth: '45%',
+		borderRadius: 16,
+		padding: 16,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 1 },
+		shadowOpacity: 0.05,
+		shadowRadius: 2,
+		elevation: 2,
+	},
+	fullWidthCard: {
+		minWidth: '100%',
+	},
+	cardHeaderRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
-		paddingVertical: 10,
-		marginHorizontal: 20,
 	},
 	iconContainer: {
-		width: 40,
-		height: 40,
-		borderRadius: 20,
+		width: 48,
+		height: 48,
+		borderRadius: 12,
 		alignItems: 'center',
 		justifyContent: 'center',
-		position: 'absolute',
-		left: 0,
+		marginBottom: 12,
 	},
-	headerTitle: {
-		fontWeight: 'bold',
-		textAlign: 'center',
-		flex: 1,
+	statValue: {
+		fontWeight: '800',
+		fontSize: 28,
+		lineHeight: 34,
+		color: '#11181C', // High contrast by default, will need theme adjustment if Text doesn't handle it (ThemedText does)
 	},
-	card: {
-		borderRadius: 20,
-		padding: 24,
-		marginBottom: 24,
-		shadowColor: '#000',
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.1,
-		shadowRadius: 8,
-		elevation: 4,
-		borderLeftWidth: 6,
-		borderLeftColor: '#40B5A6',
+	statLabel: {
+		marginTop: 4,
 	},
-	cardLabel: {
-		marginBottom: 8,
-	},
-	statsRow: {
+	roomStatsRow: {
 		flexDirection: 'row',
 		alignItems: 'baseline',
-		marginBottom: 16,
+		gap: 4,
 	},
-	statsValue: {
-		fontWeight: 'bold',
-		color: '#40B5A6',
-		marginRight: 8,
-	},
-	statsUnit: {
-		fontWeight: '500',
-	},
-	subStatsContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		alignSelf: 'flex-start',
-		paddingHorizontal: 12,
-		paddingVertical: 6,
-		borderRadius: 12,
-	},
-	subStatsText: {
-		marginLeft: 6,
-		color: '#40B5A6',
+	statSubValue: {
 		fontWeight: '600',
 	},
 	sectionTitle: {
 		fontWeight: 'bold',
 		marginBottom: 16,
+		textTransform: 'uppercase',
+		fontSize: 14,
+	},
+	actionsGrid: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		gap: 12,
 	},
 	actionButton: {
+		width: '48%', // Approx 2 columns
 		borderRadius: 16,
-		paddingVertical: 40,
+		paddingVertical: 20,
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginBottom: 16,
 		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 4 },
-		shadowOpacity: 0.15,
-		shadowRadius: 8,
-		elevation: 5,
-	},
-	buttonGreen: {
-		backgroundColor: '#40B5A6',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 4,
+		elevation: 3,
 	},
 	buttonBlue: {
-		backgroundColor: '#3F86FA',
+		backgroundColor: Colors.primary,
+	},
+	buttonDark: {
+		backgroundColor: '#11181C',
+	},
+	buttonLight: {
+		backgroundColor: '#fff',
+		borderWidth: 1,
+		borderColor: '#E6E8EB',
 	},
 	actionIconContainer: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
-		backgroundColor: 'rgba(255,255,255,0.2)',
+		marginBottom: 12,
+		width: 56,
+		height: 56,
+		borderRadius: 28,
+		backgroundColor: 'rgba(255,255,255,0.2)', // For colored buttons
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginBottom: 12,
 	},
 	actionButtonText: {
 		color: '#fff',
-		fontWeight: 'bold',
-		letterSpacing: 1,
+		letterSpacing: 0.5,
 	},
 });
