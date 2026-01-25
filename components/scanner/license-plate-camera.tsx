@@ -1,3 +1,4 @@
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
@@ -7,6 +8,7 @@ import sign from 'jwt-encode';
 import React, { useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '../themed-text';
+import { ThemedSafeAreaView } from '../ui/safe-area-view';
 
 interface LicensePlateCameraProps {
 	onClose?: () => void;
@@ -18,6 +20,8 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 	const [permission, requestPermission] = useCameraPermissions();
 	const [enableTorch, setEnableTorch] = useState(false);
 	const cameraRef = useRef<CameraView>(null);
+
+	const theme = useColorScheme() ?? 'light';
 
 	const getCropRegion = (imageWidth: number, imageHeight: number) => {
 		const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -125,18 +129,17 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 			</View>
 		);
 	}
-
 	return (
-		<View style={styles.container}>
+		<ThemedSafeAreaView style={styles.container} lightColor="#F5F7F9" darkColor="#000">
 			<View style={styles.header}>
 				{onClose ? (
 					<TouchableOpacity onPress={onClose} style={styles.backButton}>
-						<MaterialCommunityIcons name="close" size={28} color="#fff" />
+						<MaterialCommunityIcons name="close" size={28} color={theme === 'dark' ? '#fff' : '#000'} />
 					</TouchableOpacity>
 				) : (
 					<View style={{ width: 36 }} /> // Spacer to balance title
 				)}
-				<ThemedText type="large" style={styles.headerTitle}>
+				<ThemedText type="medium" style={styles.headerTitle}>
 					{title}
 				</ThemedText>
 				<View style={{ width: 36 }} />
@@ -173,35 +176,31 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 					</View>
 				</CameraView>
 			</View>
-		</View>
+		</ThemedSafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#000',
 	},
 	permissionContainer: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: 20,
-		backgroundColor: '#fff',
 	},
 	message: {
 		textAlign: 'center',
 		marginBottom: 20,
 	},
 	permissionButton: {
-		backgroundColor: '#40B5A6',
 		paddingVertical: 12,
 		paddingHorizontal: 24,
 		borderRadius: 8,
 		marginBottom: 12,
 	},
 	permissionButtonText: {
-		color: '#fff',
 		fontWeight: 'bold',
 	},
 	closeButton: {
@@ -213,19 +212,16 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingHorizontal: 16,
 		paddingVertical: 12,
-		backgroundColor: '#000',
 		zIndex: 10,
 	},
 	backButton: {
 		padding: 4,
 	},
 	headerTitle: {
-		color: '#fff',
 		fontWeight: 'bold',
 	},
 	cameraContainer: {
 		flex: 1,
-		backgroundColor: '#000',
 	},
 	camera: {
 		flex: 1,

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Modal, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Modal } from 'react-native';
 import { LicensePlateCamera } from './scanner/license-plate-camera';
 
 interface LicensePlateScannerProps {
@@ -12,16 +11,7 @@ interface LicensePlateScannerProps {
 export function LicensePlateScanner({ visible, onClose, onSuccess }: LicensePlateScannerProps) {
 	return (
 		<Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-			<SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-				<LicensePlateCamera onClose={onClose} onSuccess={onSuccess} />
-			</SafeAreaView>
+			<LicensePlateCamera onClose={onClose} onSuccess={onSuccess} />
 		</Modal>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#000',
-	},
-});

@@ -2,6 +2,7 @@ import { DatePicker } from '@/components/datepicker';
 import { LicensePlateScanner } from '@/components/license-plate-scanner';
 import { ThemedTextInput } from '@/components/text-input';
 import { ThemedButton } from '@/components/themed-button';
+import { ThemedIcon } from '@/components/themed-icon';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
 import { ThemedScrollView } from '@/components/ui/scroll-view';
@@ -33,6 +34,9 @@ export default function AddVehicleScreen() {
 	const [showRoomDropdown, setShowRoomDropdown] = useState(false);
 	const [showScanner, setShowScanner] = useState(false);
 	const [vehicleImage, setVehicleImage] = useState<string | null>(null);
+	const colorScheme = useColorScheme();
+	const isDark = colorScheme === 'dark';
+	const backgroundColor = isDark ? '#000000' : '#F5F7F9';
 
 	const handleDateChange = (event: any, selectedDate?: Date) => {
 		const currentDate = selectedDate || date;
@@ -76,12 +80,12 @@ export default function AddVehicleScreen() {
 	const placeholderColor = theme === 'dark' ? '#687076' : '#9BA1A6';
 
 	return (
-		<ThemedSafeAreaView lightColor="#F5F7F9" darkColor="#000">
+		<ThemedSafeAreaView style={[styles.container, { backgroundColor }]} edges={['top']}>
 			<Stack.Screen options={{ headerShown: false }} />
 			{/* Header */}
 			<View style={[styles.header, { backgroundColor: theme === 'dark' ? '#151718' : '#fff', borderBottomColor: borderColor }]}>
 				<TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-					<MaterialCommunityIcons name="arrow-left" size={28} color={textColor} />
+					<ThemedIcon name="arrow-left" size={28} />
 				</TouchableOpacity>
 				<ThemedText type="subtitle" style={styles.headerTitle} lightColor="#11181C" darkColor="#ECEDEE">
 					Thêm Xe Mới
@@ -133,7 +137,7 @@ export default function AddVehicleScreen() {
 						<ThemedText type="default" style={{ color: selectedRoom ? textColor : placeholderColor }}>
 							{selectedRoom || 'Chọn số phòng...'}
 						</ThemedText>
-						<MaterialCommunityIcons name="chevron-down" size={24} color={placeholderColor} />
+						<ThemedIcon name="chevron-down" size={24} lightColor="#9BA1A6" darkColor="#687076" />
 					</TouchableOpacity>
 
 					{showRoomDropdown && (
@@ -191,7 +195,7 @@ export default function AddVehicleScreen() {
 						<ThemedText type="default" style={{ fontSize: 16, color: textColor }}>
 							{dayjs(date).format('HH:mm DD/MM/YYYY')}
 						</ThemedText>
-						<MaterialCommunityIcons name="calendar" size={24} color={textColor} />
+						<ThemedIcon name="calendar" size={24} />
 					</TouchableOpacity>
 					{showDatePicker && <DatePicker mode="datetime" display="inline" is24Hour={true} value={date} onChange={handleDateChange} onClose={() => setShowDatePicker(false)} />}
 
@@ -227,6 +231,9 @@ export default function AddVehicleScreen() {
 }
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
 	header: {
 		flexDirection: 'row',
 		alignItems: 'center',

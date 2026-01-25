@@ -23,7 +23,6 @@ export default function ProfileScreen() {
 	const subTextColor = isDark ? '#9BA1A6' : '#687076';
 	const iconBgColor = isDark ? '#1A2E35' : '#F0F9F8';
 	const dividerColor = isDark ? '#333333' : '#F0F0F0';
-	const borderColor = isDark ? '#333' : '#E6E8EB';
 
 	const renderSettingItem = (
 		icon: keyof typeof MaterialCommunityIcons.glyphMap,
