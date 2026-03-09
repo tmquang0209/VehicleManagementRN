@@ -1,13 +1,12 @@
 import { RoomCard } from '@/components/rooms/room-card';
 import { RoomFilters } from '@/components/rooms/room-filters';
 import { ThemedTextInput } from '@/components/text-input';
-import { ThemedIcon } from '@/components/themed-icon';
+import { ThemedIcon } from '@/components/themed-icon'; // Assuming this wraps MCI
 import { ThemedText } from '@/components/themed-text';
 import { Header } from '@/components/ui/header';
 import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
 import { Colors } from '@/constants/theme';
 import { RoomItem } from '@/interfaces/room';
-import { useHouseStore } from '@/store/house-store';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -21,13 +20,11 @@ const MOCK_ROOMS: RoomItem[] = [
 	{ id: '302', status: 'empty', representative: null },
 ];
 
-export default function RoomTabScreen() {
+export default function RoomScreen() {
 	const [filter, setFilter] = useState<'all' | 'empty'>('all');
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isSearching, setIsSearching] = useState(false);
-
-	const { houses, selectedHouseId } = useHouseStore();
-	const selectedHouse = houses.find((h) => h.id === selectedHouseId) || houses[0];
+	const houseName = 'NHÀ TRỌ AN BÌNH'; // Mock Building Name
 
 	const filteredRooms = MOCK_ROOMS.filter((room) => {
 		const matchesStatus = filter === 'all' ? true : room.status === 'empty';
@@ -40,8 +37,9 @@ export default function RoomTabScreen() {
 		<ThemedSafeAreaView style={styles.container}>
 			{/* Header */}
 			<Header
-				title={`PHÒNG: ${selectedHouse.name.toUpperCase()}`}
+				title={houseName}
 				icon="office-building"
+				onBackPress={() => router.back()}
 				rightComponent={
 					<TouchableOpacity
 						onPress={() => {
@@ -102,7 +100,7 @@ export default function RoomTabScreen() {
 			/>
 
 			{/* Floating Action Button */}
-			<TouchableOpacity style={styles.fab} onPress={() => router.push({ pathname: '/room-form', params: { houseName: selectedHouse.name } })}>
+			<TouchableOpacity style={styles.fab} onPress={() => router.push({ pathname: '/room-form', params: { houseName } })}>
 				<ThemedIcon name="plus" size={30} color="white" />
 			</TouchableOpacity>
 		</ThemedSafeAreaView>
@@ -119,6 +117,19 @@ const styles = StyleSheet.create({
 	searchContainer: {
 		paddingHorizontal: 16,
 		marginBottom: 16,
+	},
+	houseNameContainer: {
+		paddingHorizontal: 16,
+		paddingVertical: 8,
+		backgroundColor: `${Colors.primary}15`,
+		marginHorizontal: 16,
+		marginVertical: 8,
+		borderRadius: 8,
+		alignItems: 'center',
+	},
+	houseName: {
+		color: Colors.primary,
+		textTransform: 'uppercase',
 	},
 	listContent: {
 		paddingHorizontal: 16,

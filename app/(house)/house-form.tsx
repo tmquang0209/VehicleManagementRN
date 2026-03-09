@@ -1,4 +1,5 @@
 import { ThemedTextInput } from '@/components/text-input';
+
 import { ThemedButton } from '@/components/themed-button';
 import { ThemedIcon } from '@/components/themed-icon';
 import { ThemedText } from '@/components/themed-text';
@@ -13,6 +14,7 @@ import { router, Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
+import { Toast } from 'toastify-react-native';
 
 export default function HouseFormScreen() {
 	const theme = useColorScheme() ?? 'light';
@@ -46,7 +48,7 @@ export default function HouseFormScreen() {
 		const numRooms = parseInt(roomsPerFloor || '0');
 
 		if (!numFloors || !numRooms) {
-			alert('Vui lòng nhập số tầng và số phòng hợp lệ');
+			Toast.error('Vui lòng nhập số tầng và số phòng hợp lệ');
 			return;
 		}
 
@@ -67,7 +69,7 @@ export default function HouseFormScreen() {
 		console.log('Valid House Data:', data);
 		console.log('Generated Rooms:', generatedRooms);
 
-		alert('Tạo nhà trọ và danh sách phòng thành công!');
+		Toast.success('Tạo nhà trọ và danh sách phòng thành công!');
 		router.back();
 	};
 

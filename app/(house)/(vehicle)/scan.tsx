@@ -2,24 +2,18 @@ import { LicensePlateCamera } from '@/components/scanner/license-plate-camera';
 import { ThemedIcon } from '@/components/themed-icon';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { ThemedSafeAreaView } from '@/components/ui/safe-area-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { router, Stack } from 'expo-router';
-import { useRef, useState } from 'react';
-import { Animated, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Reanimated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-
-const TOAST_DURATION = 3000;
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Toast } from 'toastify-react-native';
 
 export default function ScanScreen() {
 	const theme = useColorScheme() ?? 'light';
 	const [scanned, setScanned] = useState(false);
-	// Toast State
-	const [toastVisible, setToastVisible] = useState(false);
-	const [toastMessage, setToastMessage] = useState('');
-	const [toastType, setToastType] = useState<'success' | 'error'>('success');
-	const fadeAnim = useRef(new Animated.Value(0)).current;
 
 	// Swipe/Animation State
 	const translateY = useSharedValue(0);
@@ -33,31 +27,6 @@ export default function ScanScreen() {
 	// Mock result for UI demonstration
 	const [result, setResult] = useState<any | null>(null);
 
-	const showToast = (message: string, type: 'success' | 'error') => {
-		setToastMessage(message);
-		setToastType(type);
-		setToastVisible(true);
-		Animated.timing(fadeAnim, {
-			toValue: 1,
-			duration: 300,
-			useNativeDriver: true,
-		}).start();
-
-		setTimeout(() => {
-			hideToast();
-		}, TOAST_DURATION);
-	};
-
-	const hideToast = () => {
-		Animated.timing(fadeAnim, {
-			toValue: 0,
-			duration: 300,
-			useNativeDriver: true,
-		}).start(() => {
-			setToastVisible(false);
-		});
-	};
-
 	const handleSuccess = (plate: string, imageUri: string) => {
 		console.log('Scanned:', plate);
 		setResult({
@@ -67,13 +36,12 @@ export default function ScanScreen() {
 			ownerAddress: '---',
 		});
 		setScanned(true);
-		showToast(`Biển số hợp lệ: ${plate}`, 'success');
+		Toast.success(`Biển số hợp lệ: ${plate}`);
 	};
 
 	const handleReset = () => {
 		setScanned(false);
 		setResult(null);
-		hideToast();
 		// Reset translation for next time
 		translateY.value = 0;
 	};
@@ -92,34 +60,27 @@ export default function ScanScreen() {
 			}
 		});
 
-	return (
-		<ThemedSafeAreaView style={styles.container} edges={['top', 'bottom']}>
-			<Stack.Screen options={{ headerShown: false }} />
+	const insets = useSafeAreaInsets();
 
-			{/* custom Toast */}
-			{toastVisible && (
-				<Animated.View
-					style={[
-						styles.toastContainer,
-						{
-							opacity: fadeAnim,
-							backgroundColor: toastType === 'success' ? '#0056D2' : '#EF4444',
-						},
-					]}
-				>
-					<ThemedIcon name={toastType === 'success' ? 'check-circle' : 'alert-circle'} size={24} color="white" />
-					<ThemedText type="defaultSemiBold" style={styles.toastText}>
-						{toastMessage}
-					</ThemedText>
-				</Animated.View>
-			)}
+	return (
+		<View style={[styles.container, { backgroundColor: theme === 'dark' ? '#000' : '#F5F7F9' }]}>
+			<Stack.Screen options={{ headerShown: false }} />
 
 			<LicensePlateCamera onClose={() => router.back()} onSuccess={handleSuccess} />
 
 			{/* Result Card (Bottom Sheet style) */}
 			{scanned && result && (
 				<GestureDetector gesture={panGesture}>
-					<Reanimated.View style={[styles.resultContainer, animatedStyle, { backgroundColor: theme === 'dark' ? '#151718' : '#fff' }]}>
+					<Reanimated.View
+						style={[
+							styles.resultContainer,
+							animatedStyle,
+							{
+								backgroundColor: theme === 'dark' ? '#151718' : '#fff',
+								paddingBottom: insets.bottom + 20, // Add safe area padding
+							},
+						]}
+					>
 						<View style={styles.handleBarContainer}>
 							<View style={styles.handleBar} />
 						</View>
@@ -155,7 +116,7 @@ export default function ScanScreen() {
 							</View>
 						</ThemedView>
 
-						<TouchableOpacity style={[styles.actionBtn, styles.btnApprove]} onPress={() => alert('Approved')}>
+						<TouchableOpacity style={[styles.actionBtn, styles.btnApprove]} onPress={() => Toast.success('Approved')}>
 							<ThemedIcon name="check-circle-outline" size={24} color="white" />
 							<ThemedText type="defaultSemiBold" style={styles.btnText}>
 								CHO XE VÀO
@@ -177,7 +138,7 @@ export default function ScanScreen() {
 					</Reanimated.View>
 				</GestureDetector>
 			)}
-		</ThemedSafeAreaView>
+		</View>
 	);
 }
 
@@ -314,27 +275,5 @@ const styles = StyleSheet.create({
 	manualLinkText: {
 		color: '#0056D2',
 		fontWeight: '500',
-	},
-	toastContainer: {
-		position: 'absolute',
-		top: 60,
-		left: 20,
-		right: 20,
-		padding: 16,
-		borderRadius: 12,
-		flexDirection: 'row',
-		alignItems: 'center',
-		zIndex: 9999,
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 4 },
-		shadowOpacity: 0.15,
-		shadowRadius: 8,
-		elevation: 10,
-	},
-	toastText: {
-		color: '#fff',
-		fontWeight: '600',
-		marginLeft: 12,
-		flex: 1,
 	},
 });

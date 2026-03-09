@@ -13,7 +13,7 @@ export const HouseSchema = z.object({
 		.string()
 		.optional()
 		.refine((val) => !val || !isNaN(Number(val)), { message: 'Số phòng phải là số' }),
-	prefix: z.string().default('P'),
+	prefix: z.string(),
 });
 
 export type HouseFormValues = z.infer<typeof HouseSchema>;

@@ -1,14 +1,15 @@
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import sign from 'jwt-encode';
 import React, { useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Toast } from 'toastify-react-native';
 import { ThemedText } from '../themed-text';
-import { ThemedSafeAreaView } from '../ui/safe-area-view';
 
 interface LicensePlateCameraProps {
 	onClose?: () => void;
@@ -20,6 +21,7 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 	const [permission, requestPermission] = useCameraPermissions();
 	const [enableTorch, setEnableTorch] = useState(false);
 	const cameraRef = useRef<CameraView>(null);
+	const insets = useSafeAreaInsets();
 
 	const theme = useColorScheme() ?? 'light';
 
@@ -61,7 +63,7 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 		},
 		onError: (error) => {
 			console.error('API Error:', error);
-			alert('Lỗi kết nối máy chủ. Vui lòng thử lại.');
+			Toast.error('Lỗi kết nối máy chủ. Vui lòng thử lại.');
 		},
 	});
 
@@ -80,16 +82,11 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 
 			const result = await mutation.mutateAsync(formData);
 
-			if (result.license_plate && Array.isArray(result.license_plate) && result.license_plate.length > 0 && result.license_plate[0]) {
-				onSuccess(result.license_plate[0], manipResult.uri);
-			} else {
-				alert('Không tìm thấy biển số. Vui lòng thử lại.');
-			}
+			if (result.license_plate && Array.isArray(result.license_plate) && result.license_plate.length > 0 && result.license_plate[0]) onSuccess(result.license_plate[0], manipResult.uri);
+			else Toast.error('Không tìm thấy biển số. Vui lòng thử lại.');
 		} catch (error) {
 			console.error('Processing Error:', error);
-			if (!axios.isAxiosError(error)) {
-				alert('Đã có lỗi xảy ra khi xử lý ảnh.');
-			}
+			if (!isAxiosError(error)) Toast.error('Đã có lỗi xảy ra khi xử lý ảnh.');
 		}
 	};
 
@@ -129,8 +126,9 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 			</View>
 		);
 	}
+
 	return (
-		<ThemedSafeAreaView style={styles.container} lightColor="#F5F7F9" darkColor="#000">
+		<View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: theme === 'dark' ? '#000' : '#F5F7F9' }]}>
 			<View style={styles.header}>
 				{onClose ? (
 					<TouchableOpacity onPress={onClose} style={styles.backButton}>
@@ -176,7 +174,7 @@ export function LicensePlateCamera({ onClose, onSuccess, title = 'Quét Biển S
 					</View>
 				</CameraView>
 			</View>
-		</ThemedSafeAreaView>
+		</View>
 	);
 }
 

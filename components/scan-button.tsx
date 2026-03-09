@@ -5,7 +5,7 @@ export const ScanButton = ({ onPress }: { onPress: () => void }) => {
 	return (
 		<TouchableOpacity onPress={onPress} style={styles.container} activeOpacity={0.8}>
 			<View style={styles.button}>
-				<MaterialCommunityIcons name="qrcode-scan" size={30} color="#40B5A6" />
+				<MaterialCommunityIcons name="qrcode-scan" size={30} color="#0056D2" />
 			</View>
 		</TouchableOpacity>
 	);
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		justifyContent: 'center',
 		alignItems: 'center',
-		shadowColor: '#40B5A6',
+		shadowColor: '#0056D2',
 		shadowOffset: {
 			width: 0,
 			height: 4,
@@ -33,6 +33,6 @@ const styles = StyleSheet.create({
 		shadowRadius: 4.65,
 		elevation: 8,
 		borderWidth: 4,
-		borderColor: '#E6F7F5', // Light teal border to match design
+		borderColor: '#E6F0FF', // Light blue border
 	},
 });

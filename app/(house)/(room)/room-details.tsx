@@ -93,20 +93,22 @@ export default function RoomDetailsScreen() {
 
 				<View style={styles.vehicleList}>
 					{MOCK_VEHICLES.map((vehicle) => (
-						<ThemedView key={vehicle.id} style={styles.vehicleCard} lightColor="#fff" darkColor="#151718">
-							<View style={styles.vehicleIconContainer}>
-								<ThemedIcon name={vehicle.type === 'car' ? 'car' : 'motorbike'} size={24} color={theme === 'dark' ? 'white' : 'gray'} />
-							</View>
-							<View style={styles.vehicleInfo}>
-								<ThemedText type="defaultSemiBold" style={styles.plateNumber} lightColor="#0056D2" darkColor="#409CFF">
-									{vehicle.plate}
-								</ThemedText>
-								<ThemedText type="small" style={styles.vehicleDesc}>
-									{vehicle.description}
-								</ThemedText>
-							</View>
-							<View style={styles.statusIndicator} />
-						</ThemedView>
+						<TouchableOpacity key={vehicle.id} onPress={() => router.push(`/vehicles/${vehicle.id}` as any)} activeOpacity={0.7}>
+							<ThemedView style={styles.vehicleCard} lightColor="#fff" darkColor="#151718">
+								<View style={styles.vehicleIconContainer}>
+									<ThemedIcon name={vehicle.type === 'car' ? 'car' : 'motorbike'} size={24} color={theme === 'dark' ? 'white' : 'gray'} />
+								</View>
+								<View style={styles.vehicleInfo}>
+									<ThemedText type="defaultSemiBold" style={styles.plateNumber} lightColor="#0056D2" darkColor="#409CFF">
+										{vehicle.plate}
+									</ThemedText>
+									<ThemedText type="small" style={styles.vehicleDesc}>
+										{vehicle.description}
+									</ThemedText>
+								</View>
+								<View style={styles.statusIndicator} />
+							</ThemedView>
+						</TouchableOpacity>
 					))}
 				</View>
 			</ScrollView>

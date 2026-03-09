@@ -76,7 +76,6 @@ export function HouseCard({ item, onPress }: HouseCardProps) {
 						// Use specific blue from design if needed, default primary is close
 					]}
 					icon={item.status === 'active' ? <ThemedIcon name="chevron-right" size={20} color="white" /> : undefined}
-					iconPosition="right"
 					disabled={item.status !== 'active'}
 				/>
 			</View>

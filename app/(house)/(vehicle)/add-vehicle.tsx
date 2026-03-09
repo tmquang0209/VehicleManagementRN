@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import { router, Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Toast } from 'toastify-react-native';
 
 // Constants
 const RELATIONSHIPS = [
@@ -70,10 +71,10 @@ export default function AddVehicleScreen() {
 	const handleAdd = () => {
 		// Mock submission
 		if (!plate || !selectedRoom || !relationship) {
-			alert('Vui lòng điền đầy đủ thông tin');
+			Toast.error('Vui lòng điền đầy đủ thông tin');
 			return;
 		}
-		alert('Thêm xe thành công!');
+		Toast.success('Thêm xe thành công!');
 		router.back();
 	};
 

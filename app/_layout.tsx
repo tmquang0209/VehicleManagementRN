@@ -1,5 +1,6 @@
 import { SplashScreen as CustomSplashScreen } from '@/components/SplashScreen';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
@@ -19,6 +20,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	const colorScheme = useColorScheme();
+	usePushNotifications();
 	const [queryClient] = useState(() => new QueryClient());
 	const [isSplashAnimationFinished, setSplashAnimationFinished] = useState(false);
 

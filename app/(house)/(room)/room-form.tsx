@@ -1,3 +1,4 @@
+import { CurrencyInput } from '@/components/currency-input';
 import { ThemedTextInput } from '@/components/text-input';
 import { ThemedButton } from '@/components/themed-button';
 import { ThemedIcon } from '@/components/themed-icon';
@@ -13,6 +14,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Toast } from 'toastify-react-native';
 
 const STATUS_OPTIONS = [
 	{ id: 'empty', label: 'Trống', color: Colors.secondary },
@@ -48,7 +50,7 @@ export default function RoomFormScreen() {
 
 	const onSubmit = (data: RoomFormValues) => {
 		console.log('Valid Room Data:', data);
-		alert(isEdit ? 'Cập nhật phòng thành công!' : 'Tạo phòng thành công!');
+		Toast.success(isEdit ? 'Cập nhật phòng thành công!' : 'Tạo phòng thành công!');
 		router.back();
 	};
 
@@ -99,7 +101,7 @@ export default function RoomFormScreen() {
 					<Controller
 						control={control}
 						name="price"
-						render={({ field: { onChange, value } }) => <ThemedTextInput label="Giá thuê (VNĐ)" placeholder="VD: 3.500.000" value={value} onChangeText={onChange} keyboardType="numeric" />}
+						render={({ field: { onChange, value } }) => <CurrencyInput label="Giá thuê (VNĐ)" placeholder="VD: 3.500.000" value={value} onChangeText={onChange} />}
 					/>
 				</View>
 
@@ -142,7 +144,7 @@ export default function RoomFormScreen() {
 						style={{ marginTop: 12, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'red' }}
 						icon={<ThemedIcon name="trash-can-outline" size={20} color="red" />}
 						onPress={() => {
-							alert('Đã xóa phòng!');
+							Toast.success('Đã xóa phòng!');
 							router.back();
 						}}
 					/>
